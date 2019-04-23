@@ -34,12 +34,19 @@ public class prob3 {
 
             // Split the line on the spaces to get an array containing
             // the individual words.
-            String[] words = line.split(" ");
+            String[] words = line.split(",");
 
             // Process the words one at a time, writing a key-value pair
             // for each of them.
             for (String word : words) {
-                context.write(new Text(word), new IntWritable(1));
+                if(word.contains("@"))
+                {
+                    String parts[] = word.split("\\@");
+                    String tempWord = parts[1];
+                    tempWord = tempWord.split(";")[0];
+                    context.write(new Text(tempWord), new IntWritable(1));
+                }
+
             }
         }
     }

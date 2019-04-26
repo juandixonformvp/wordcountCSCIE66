@@ -76,15 +76,18 @@ public class prob4 {
 
 
     public static class MyMapper2 extends
-            Mapper<Object, Text, Text, Text>
+            Mapper<Object, Text, Text, IntWritable>
     {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException
         {
 
-            String tempWord2 = "c";
+//            String tempWord2 = "c";
+//            context.write(new Text(tempWord2) , value);
 
-            context.write(new Text(tempWord2) , value);
+            String line = value.toString();
+            context.write(new Text(line), new IntWritable(1));
+
 
         }
     }
@@ -98,17 +101,26 @@ public class prob4 {
                 throws IOException, InterruptedException
         {
 
-            // Determines the key with the max value
-            int max = 0;
-            String keyWithMax = "";
-            for (IntWritable value : values) {
-                if (value.get() > max) {
-                    max = value.get();
-                    keyWithMax = key.toString();
-                }
+//            // Determines the key with the max value
+//            int max = 0;
+//            String keyWithMax = "";
+//            for (IntWritable value : values) {
+//                if (value.get() > max) {
+//                    max = value.get();
+//                    keyWithMax = key.toString();
+//                }
+//
+//                context.write(new Text(keyWithMax), new LongWritable(max));
+//            }
 
-                context.write(new Text(keyWithMax), new LongWritable(max));
+
+            // Total the list of values associated with the word.
+            long count = 0;
+            for (IntWritable val : values) {
+                count += val.get();
             }
+
+            context.write(key, new LongWritable(count));
 
 
         }

@@ -1,6 +1,7 @@
 package cscie55.hadoop;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -76,17 +77,17 @@ public class prob4 {
 
 
     public static class MyMapper2 extends
-            Mapper<Object, Text, Text, IntWritable>
+            Mapper<Object, Text, Text, Text>
     {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException
         {
+//            String line = value.toString();
+            String tempWord2 = "c";
+            context.write(new Text(tempWord2), value);
 
-//            String tempWord2 = "c";
-//            context.write(new Text(tempWord2) , value);
-
-            String line = value.toString();
-            context.write(new Text(line), new IntWritable(1));
+//            String line = value.toString();
+//            context.write(new Text(line), new IntWritable(1));
 
 
         }
@@ -95,34 +96,19 @@ public class prob4 {
 
 
     public static class MyReducer2 extends
-            Reducer<Text, IntWritable, Text, LongWritable>
+            Reducer<Text, Text, Text, LongWritable>
     {
-        public void reduce(Text key, Iterable<IntWritable> values, Context context)
+        public void reduce(Text key, ArrayList<Text> values, Context context)
                 throws IOException, InterruptedException
         {
-
-//            // Determines the key with the max value
-//            int max = 0;
-//            String keyWithMax = "";
-//            for (IntWritable value : values) {
-//                if (value.get() > max) {
-//                    max = value.get();
-//                    keyWithMax = key.toString();
-//                }
-//
-//                context.write(new Text(keyWithMax), new LongWritable(max));
-//            }
-
-
             // Total the list of values associated with the word.
             long count = 0;
-            for (IntWritable val : values) {
-                count += val.get();
-            }
+//            for (IntWritable val : values) {
+//                count += val.get();
+//            }
+            String temp = "aaa";
 
             context.write(key, new LongWritable(count));
-
-
         }
     }
 
@@ -183,7 +169,7 @@ public class prob4 {
         // by job.setOutputValueClass() above.
         // If the mapper and reducer output values of the same type,
         // you can comment out or remove this line.
-        job2.setMapOutputValueClass(IntWritable.class);
+        job2.setMapOutputValueClass(Text.class);
         job2.setInputFormatClass(TextInputFormat.class);
         FileInputFormat.addInputPath(job2, new Path(args[2]));
         FileOutputFormat.setOutputPath(job2, new Path(args[3]));

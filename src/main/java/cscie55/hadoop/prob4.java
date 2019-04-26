@@ -76,32 +76,19 @@ public class prob4 {
 
 
     public static class MyMapper2 extends
-            Mapper<Object, Text, Text, IntWritable>
+            Mapper<Object, Text, Text, Text>
     {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException
         {
-            // Convert the Text object for the value to a String.
-            String line = value.toString();
 
-            // Split the line on the spaces to get an array containing
-            // the individual words.
-            String[] words = line.split(",");
+            String tempWord2 = "c";
 
-            // Process the words one at a time, writing a key-value pair
-            // for each of them.
-            for (String word : words) {
-                if(word.contains("@"))
-                {
-                    String parts[] = word.split("\\@");
-                    String tempWord = parts[1];
-                    tempWord = tempWord.split(";")[0];
-                    context.write(new Text(tempWord), new IntWritable(1));
-                }
+            context.write(new Text(tempWord2) , value);
 
-            }
         }
     }
+
 
 
     public static class MyReducer2 extends
@@ -110,16 +97,22 @@ public class prob4 {
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException
         {
-            // Total the list of values associated with the word.
-            long count = 0;
-            for (IntWritable val : values) {
-                count += val.get();
+
+            // Determines the key with the max value
+            int max = 0;
+            String keyWithMax = "";
+            for (IntWritable value : values) {
+                if (value.get() > max) {
+                    max = value.get();
+                    keyWithMax = key.toString();
+                }
+
+                context.write(new Text(keyWithMax), new LongWritable(max));
             }
 
-            context.write(key, new LongWritable(count));
+
         }
     }
-
 
 
 
@@ -132,8 +125,8 @@ public class prob4 {
         // Specifies the name of the outer class.
         job.setJarByClass(prob4.class);
         // Specifies the names of the mapper and reducer classes.
-        job.setMapperClass(MyMapper.class);
-        job.setReducerClass(MyReducer.class);
+        job.setMapperClass(prob4.MyMapper.class);
+        job.setReducerClass(prob4.MyReducer.class);
         // Sets the type for the keys output by the mapper and reducer.
         job.setOutputKeyClass(Text.class);
         // Sets the type for the values output by the mapper and reducer,
@@ -161,8 +154,8 @@ public class prob4 {
         // Specifies the name of the outer class.
         job2.setJarByClass(prob4.class);
         // Specifies the names of the mapper and reducer classes.
-        job2.setMapperClass(MyMapper.class);
-        job2.setReducerClass(MyReducer.class);
+        job2.setMapperClass(MyMapper2.class);
+        job2.setReducerClass(MyReducer2.class);
         // Sets the type for the keys output by the mapper and reducer.
         job2.setOutputKeyClass(Text.class);
         // Sets the type for the values output by the mapper and reducer,

@@ -104,12 +104,12 @@ public class prob4 {
                 throws IOException, InterruptedException
         {
             // Total the list of values associated with the word.
-            long theCount = 999999;
+            long theCount = 0;
             String theWord = "aaa";
             for (Text val : values) {
                 String tempString = val.toString();
                 String[] words = tempString.split("\t");
-                if(Long.valueOf(words[1]) > theCount) {
+                if(Long.valueOf(words[1]) < theCount) {
                     continue;
                 }
                 theWord = words[0];

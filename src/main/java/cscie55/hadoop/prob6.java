@@ -44,7 +44,7 @@ public class prob6 {
 
 
     public static class MyMapper extends
-            Mapper<Object, Text, Text, IntWritable>
+            Mapper<Object, Text, Text, IntArrayWritable>
     {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException
@@ -64,14 +64,28 @@ public class prob6 {
                     continue;
                 }
                 String parts[] = word.split(",");
-                context.write(new Text(words[0]), new IntWritable(parts.length));
+
+                IntWritable parts2[] = new IntWritable[parts.length];
+                Integer counter = 0;
+                for (String part : parts) {
+                    parts2[counter] = new IntWritable(Integer.parseInt(part));
+                    counter++;
+
+                    String pass_text = "(" + words[0] + "," + part + ")";
+                    IntArrayWritable pass_int = new IntArrayWritable(parts2);
+
+                    context.write(new Text(pass_text), pass_int);
+
+                }
+
+
             }
         }
     }
 
 
     public static class MyReducer extends
-            Reducer<Text, IntWritable, Text, IntWritable>
+            Reducer<Text, IntArrayWritable, Text, IntArrayWritable>
     {
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException
@@ -103,7 +117,7 @@ public class prob6 {
 
         // Sets the type for the values output by the mapper and reducer,
         // although we can--and do in this case--change the mapper's type below.
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(IntArrayWritable.class);
 
         // Sets the type for the keys output by the mapper.
         // Not needed here because both the mapper and reducer's output keys
@@ -116,7 +130,7 @@ public class prob6 {
         // by job.setOutputValueClass() above.
         // If the mapper and reducer output values of the same type,
         // you can comment out or remove this line.
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputValueClass(IntArrayWritable.class);
 
 
         job.setInputFormatClass(TextInputFormat.class);

@@ -73,52 +73,52 @@ public class prob5 {
 
 
 
-//
-//
-//    public static class MyMapper2 extends
-//            Mapper<Object, Text, Text, Text>
-//    {
-//        public void map(Object key, Text value, Context context)
-//                throws IOException, InterruptedException
-//        {
-////            String line = value.toString();
-//            String tempWord2 = "c";
-//            context.write(new Text(tempWord2), value);
-//
-////            String line = value.toString();
-////            context.write(new Text(line), new IntWritable(1));
-//
-//
-//        }
-//    }
-//
-//
-//
-//    public static class MyReducer2 extends
-//            Reducer<Text, Text, Text, LongWritable>
-//    {
-//        public void reduce(Text key, Iterable<Text> values, Context context)
-//                throws IOException, InterruptedException
-//        {
-//            // Total the list of values associated with the word.
-//            long theCount = 0;
-//            String theWord = "aaa";
-//            for (Text val : values) {
-//                String tempString = val.toString();
-//                String[] words = tempString.split("\t");
-//                if(Long.valueOf(words[1]) < theCount) {
-//                    continue;
-//                }
-//                theWord = words[0];
-//                theCount = Long.valueOf(words[1]);
-//            }
-//            String temp = "aaa";
-//
-//            context.write(new Text(theWord), new LongWritable(theCount));
-//        }
-//    }
-//
-//
+
+
+    public static class MyMapper2 extends
+            Mapper<Object, Text, Text, Text>
+    {
+        public void map(Object key, Text value, Context context)
+                throws IOException, InterruptedException
+        {
+//            String line = value.toString();
+            String tempWord2 = "c";
+            context.write(new Text(tempWord2), value);
+
+//            String line = value.toString();
+//            context.write(new Text(line), new IntWritable(1));
+
+
+        }
+    }
+
+
+
+    public static class MyReducer2 extends
+            Reducer<Text, Text, Text, LongWritable>
+    {
+        public void reduce(Text key, Iterable<Text> values, Context context)
+                throws IOException, InterruptedException
+        {
+            // Total the list of values associated with the word.
+            long theCount = 0;
+            String theWord = "aaa";
+            for (Text val : values) {
+                String tempString = val.toString();
+                String[] words = tempString.split("\t");
+                if(Long.valueOf(words[1]) < theCount) {
+                    continue;
+                }
+                theWord = words[0];
+                theCount = Long.valueOf(words[1]);
+            }
+            String temp = "aaa";
+
+            context.write(new Text(theWord), new LongWritable(theCount));
+        }
+    }
+
+
 
 
 
@@ -153,35 +153,33 @@ public class prob5 {
         job.waitForCompletion(true);
 
 
-//
-//        Job job2 = Job.getInstance(conf, "word count");
-//        // Specifies the name of the outer class.
-//        job2.setJarByClass(prob4.class);
-//        // Specifies the names of the mapper and reducer classes.
-//        job2.setMapperClass(MyMapper2.class);
-//        job2.setReducerClass(MyReducer2.class);
-//        // Sets the type for the keys output by the mapper and reducer.
-//        job2.setOutputKeyClass(Text.class);
-//        // Sets the type for the values output by the mapper and reducer,
-//        // although we can--and do in this case--change the mapper's type below.
-//        job2.setOutputValueClass(LongWritable.class);
-//        // Sets the type for the keys output by the mapper.
-//        // Not needed here because both the mapper and reducer's output keys
-//        // have the same type, but you can uncomment it as needed
-//        // and pass in the appropriate type.
-//        //   job.setMapOutputKeyClass(Text.class);
-//        // Sets the type for the values output by the mapper.
-//        // This is needed because it is different than the type specified
-//        // by job.setOutputValueClass() above.
-//        // If the mapper and reducer output values of the same type,
-//        // you can comment out or remove this line.
-//        job2.setMapOutputValueClass(Text.class);
-//        job2.setInputFormatClass(TextInputFormat.class);
-//        FileInputFormat.addInputPath(job2, new Path(args[2]));
-//        FileOutputFormat.setOutputPath(job2, new Path(args[3]));
-//        job2.waitForCompletion(true);
-//
 
+        Job job2 = Job.getInstance(conf, "word count");
+        // Specifies the name of the outer class.
+        job2.setJarByClass(prob4.class);
+        // Specifies the names of the mapper and reducer classes.
+        job2.setMapperClass(MyMapper2.class);
+        job2.setReducerClass(MyReducer2.class);
+        // Sets the type for the keys output by the mapper and reducer.
+        job2.setOutputKeyClass(Text.class);
+        // Sets the type for the values output by the mapper and reducer,
+        // although we can--and do in this case--change the mapper's type below.
+        job2.setOutputValueClass(LongWritable.class);
+        // Sets the type for the keys output by the mapper.
+        // Not needed here because both the mapper and reducer's output keys
+        // have the same type, but you can uncomment it as needed
+        // and pass in the appropriate type.
+        //   job.setMapOutputKeyClass(Text.class);
+        // Sets the type for the values output by the mapper.
+        // This is needed because it is different than the type specified
+        // by job.setOutputValueClass() above.
+        // If the mapper and reducer output values of the same type,
+        // you can comment out or remove this line.
+        job2.setMapOutputValueClass(Text.class);
+        job2.setInputFormatClass(TextInputFormat.class);
+        FileInputFormat.addInputPath(job2, new Path(args[2]));
+        FileOutputFormat.setOutputPath(job2, new Path(args[3]));
+        job2.waitForCompletion(true);
 
 
 

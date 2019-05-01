@@ -109,7 +109,8 @@ public class prob5 {
                 if(Long.valueOf(words[1]) < theCount) {
                     continue;
                 }
-                theWord = words[0];
+                String word_parts[] = words[0].split(",");
+                theWord = word_parts[0];
                 theCount = Long.valueOf(words[1]);
             }
             String temp = "aaa";

@@ -23,8 +23,28 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 public class prob6 {
 
 
+    public static class IntArrayWritable extends ArrayWritable {
+        public IntArrayWritable() {
+            super(IntWritable.class);
+        }
+
+        public IntArrayWritable(IntWritable[] values) {
+            super(IntWritable.class, values);
+        }
+
+        public int[] toIntArray() {
+            Writable[] w = this.get();
+            int[] a = new int[w.length];
+            for (int i = 0; i < a.length; ++i) {
+                a[i] = Integer.parseInt(w[i].toString());
+            }
+            return a;
+        }
+    }
+
+
     public static class MyMapper extends
-            Mapper<Object, Text, Text, Text>
+            Mapper<Object, Text, Text, IntWritable>
     {
         public void map(Object key, Text value, Context context)
                 throws IOException, InterruptedException
@@ -35,25 +55,23 @@ public class prob6 {
             // Split the line on the spaces to get an array containing
             // the individual words.
             String[] words = line.split(",");
+            String[] words2 = line.split(";");
 
             // Process the words one at a time, writing a key-value pair
             // for each of them.
-            for (String word : words) {
-                if(word.contains("@"))
-                {
-                    String parts[] = word.split("\\@");
-                    String tempWord = parts[1];
-                    tempWord = tempWord.split(";")[0];
-                    context.write(new Text(tempWord), new IntWritable(1));
+            for (String word : words2) {
+                if(word.contains("@") || word.contains("-")) {
+                    continue;
                 }
-
+                String parts[] = word.split(",");
+                context.write(new Text(words[0]), new IntWritable(parts.length));
             }
         }
     }
 
 
     public static class MyReducer extends
-            Reducer<Text, Text, Text, Text>
+            Reducer<Text, IntWritable, Text, IntWritable>
     {
         public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException
@@ -85,7 +103,7 @@ public class prob6 {
 
         // Sets the type for the values output by the mapper and reducer,
         // although we can--and do in this case--change the mapper's type below.
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
 
         // Sets the type for the keys output by the mapper.
         // Not needed here because both the mapper and reducer's output keys
@@ -98,7 +116,7 @@ public class prob6 {
         // by job.setOutputValueClass() above.
         // If the mapper and reducer output values of the same type,
         // you can comment out or remove this line.
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
 
 
         job.setInputFormatClass(TextInputFormat.class);
